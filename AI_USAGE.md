@@ -54,7 +54,7 @@ To build a genuinely useful platform, **I actively audited, challenged, and reje
   3. *The Solution Adopted:* I designed a **Hybrid Composite Evaluation Pipeline**:
      - **Deterministic First-Pass:** Regex/AST structural validation checks for minimum class decomposition, presence of interfaces, and edge-case handling.
      - **Strict Rubric Shape:** Every criterion is strictly modeled as:
-       $$\text{Criterion} \longrightarrow \text{Score} \longrightarrow \text{Direct Evidence} \longrightarrow \text{Concern} \longrightarrow \text{Suggestion} \longrightarrow \text{Confidence}$$
+       $$\text{Criterion} → \text{Score} → \text{Direct Evidence} → \text{Concern} → \text{Suggestion} → \text{Confidence}$$
      - **Evidence Requirement:** The evaluator is forced to extract literal code tokens from the candidate's text as `evidence` (e.g., *"In `ParkingSpot.ts`, method `calculateFee()` directly accesses billing rules"*). Without concrete evidence, a concern cannot be raised.
 
 ---
@@ -64,7 +64,7 @@ To build a genuinely useful platform, **I actively audited, challenged, and reje
 * **What the AI Suggested:**  
   When asked how to handle slow or failing AI evaluations, the AI recommended an event-driven microservices architecture: an API Gateway, a submission microservice, an Apache Kafka or RabbitMQ event broker, separate Python evaluation workers, and a Redis state cache.
 * **What Was Accepted:**  
-  Accepted the principle of **asynchronous non-blocking evaluation** (`202 Accepted`) and the necessity of an explicit lifecycle state machine (`DRAFT` $\rightarrow$ `SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED` / `FAILED`).
+  Accepted the principle of **asynchronous non-blocking evaluation** (`202 Accepted`) and the necessity of an explicit lifecycle state machine (`DRAFT` → `SUBMITTED` → `EVALUATING` → `COMPLETED` / `FAILED`).
 * **What I Rejected:**  
   **I rejected Kafka, RabbitMQ, and microservice decomposition entirely.**
 * **Engineering Rationale & Why I Overruled the AI:**  
@@ -114,7 +114,7 @@ To build a genuinely useful platform, **I actively audited, challenged, and reje
 | Decision Area | What AI Proposed | What I Decided | Engineering Justification |
 | :--- | :--- | :--- | :--- |
 | **1. Submission Model** | Docker sandbox + automated unit testing. | **Structured Text + Live Mermaid Class Diagram.** | Avoids brittle test naming; focuses on abstractions, relationships, and trade-offs. |
-| **2. Evaluation Engine** | Single unconstrained prompt $\rightarrow$ 100-pt score. | **Hybrid Composite Evaluator + Fixed Rubric Shape.** | Eliminates AI sycophancy and score instability; requires token-level evidence. |
+| **2. Evaluation Engine** | Single unconstrained prompt → 100-pt score. | **Hybrid Composite Evaluator + Fixed Rubric Shape.** | Eliminates AI sycophancy and score instability; requires token-level evidence. |
 | **3. Scalability / Jobs** | Kafka + Microservices + Redis + Celery. | **In-Process `EvaluationJobRunner` in Monolith.** | Zero external bloat; satisfies Section 5 mandate while providing non-blocking async execution. |
 | **4. Design Patterns** | Inject 6 GoF patterns per problem (Visitor, Memento, etc.). | **Pragmatic patterns only (Strategy & State).** | Penalizes over-engineering; rewards clean encapsulation and cohesion. |
 | **5. Attempt History** | Static list of submission dates and scores. | **Progression Delta Engine (Attempt $N$ vs $N-1$).** | Deliberate practice requires tracking the exact resolution of architectural critique. |

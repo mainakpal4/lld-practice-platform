@@ -45,7 +45,7 @@ npm test
 ```
 
 ### Test Coverage Highlights:
-- **`Attempt.test.ts`**: Verifies the strict state machine transitions (`DRAFT` $\rightarrow$ `SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED` / `FAILED`), idempotency, and submission validation.
+- **`Attempt.test.ts`**: Verifies the strict state machine transitions (`DRAFT` → `SUBMITTED` → `EVALUATING` → `COMPLETED` / `FAILED`), idempotency, and submission validation.
 - **`Evaluators.test.ts`**: Verifies deterministic rule evaluation, heuristic/LLM cognitive analysis, and composite aggregation.
 - **`PracticeService.test.ts`**: Tests attempt creation, submission flow, asynchronous runner, and progression delta calculation across attempts.
 - **`EdgeCases.test.ts`**: Tests duplicate submission rejection (idempotency guard), evaluator failure recovery, and retry flow.
@@ -56,7 +56,7 @@ npm test
 
 The platform is designed around deliberate practice rather than passive reading:
 
-$$\boxed{\text{Choose Problem}} \longrightarrow \boxed{\text{Think - Model}} \longrightarrow \boxed{\text{Submit}} \longrightarrow \boxed{\text{Rubric Feedback}} \longrightarrow \boxed{\text{Review}} \longrightarrow \boxed{\text{Try Again (Progression)}}$$
+$$\boxed{\text{Choose Problem}} → \boxed{\text{Think - Model}} → \boxed{\text{Submit}} → \boxed{\text{Rubric Feedback}} → \boxed{\text{Review}} → \boxed{\text{Try Again (Progression)}}$$
 
 1. **Choose Problem:** Select from curated, archetypal LLD challenges:
    - **Parking Lot System** (Vehicle polymorphism, Spot allocation strategy, Dynamic pricing strategy, Concurrency).
@@ -66,7 +66,7 @@ $$\boxed{\text{Choose Problem}} \longrightarrow \boxed{\text{Think - Model}} \lo
 2. **Think & Model:** Define domain assumptions, render live Mermaid class diagrams, write class/interface skeletons, and document concurrency mechanisms.
 3. **Submit:** Non-blocking async submission (`202 Accepted`).
 4. **Rubric Feedback:** Receive actionable feedback structured in a fixed shape:
-   $$\text{Criterion} \longrightarrow \text{Score} \longrightarrow \text{Evidence} \longrightarrow \text{Concern} \longrightarrow \text{Suggestion} \longrightarrow \text{Confidence}$$
+   $$\text{Criterion} → \text{Score} → \text{Evidence} → \text{Concern} → \text{Suggestion} → \text{Confidence}$$
 5. **Review & Try Again:** Re-attempt the problem and view an explicit **Progression Delta** comparing Attempt $N$ and Attempt $N-1$.
 
 ---

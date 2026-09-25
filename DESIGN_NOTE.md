@@ -11,7 +11,7 @@
 
 The **LLD Practice Platform** is built to facilitate deliberate practice in Object-Oriented and Low-Level System Design. The system architecture is centered entirely around the learner's feedback loop:
 
-$$\boxed{\text{Problem Selection}} \longrightarrow \boxed{\text{Structured Design Draft}} \longrightarrow \boxed{\text{Asynchronous Submission}} \longrightarrow \boxed{\text{Rubric Evaluation}} \longrightarrow \boxed{\text{Progression Review \& Retry}}$$
+$$\boxed{\text{Problem Selection}} → \boxed{\text{Structured Design Draft}} → \boxed{\text{Asynchronous Submission}} → \boxed{\text{Rubric Evaluation}} → \boxed{\text{Progression Review \& Retry}}$$
 
 ### Architectural Philosophy: Deliberate Simplicity
 Rather than attempting to build a generic LMS or heavy distributed microservices (which violate Section 5 of the assignment brief), this system is implemented as a **modular monolith** with clean separation between the **Domain Model**, **Evaluation Strategies**, **Application Services**, and **Presentation Layer**.
@@ -145,7 +145,7 @@ classDiagram
 ### Domain Class Responsibilities:
 1. **`Problem`**: Holds the domain specification, functional/non-functional constraints, and the grading `Rubric`. It acts as the immutable reference criteria.
 2. **`Attempt`**: Manages the lifecycle of a learner's engagement with a problem. Governs the state machine:
-   $$\text{DRAFT} \longrightarrow \text{SUBMITTED} \longrightarrow \text{EVALUATING} \longrightarrow \text{COMPLETED} \quad (\text{or } \text{FAILED})$$
+   $$\text{DRAFT} → \text{SUBMITTED} → \text{EVALUATING} → \text{COMPLETED}   (\text{or } \text{FAILED})$$
    Enforces state invariants, guards against duplicate submissions, and guarantees data integrity.
 3. **`Submission`**: Represents the immutable snapshot of a candidate's design at a specific point in time. It encapsulates an `ISubmissionContent`.
 4. **`ISubmissionContent`**: Polymorphic interface defining what constitutes a valid design representation.
@@ -166,7 +166,7 @@ A learner must provide **four essential structural components**:
 
 ### Q2: What makes feedback useful when there can be more than one valid LLD solution?
 **Decision:** Feedback must never treat a reference solution as the sole canonical truth. Instead, feedback is evaluated against **axiomatic object-oriented principles (SOLID)** using a **Rubric-Driven Evaluation Shape**:
-$$\text{Criterion} \longrightarrow \text{Score} \longrightarrow \text{Direct Evidence} \longrightarrow \text{Identified Concern} \longrightarrow \text{Actionable Suggestion} \longrightarrow \text{Confidence}$$
+$$\text{Criterion} → \text{Score} → \text{Direct Evidence} → \text{Identified Concern} → \text{Actionable Suggestion} → \text{Confidence}$$
 - **Equifinality in Design:** If Design A uses Strategy and Design B uses Command, both receive full marks for abstraction *if* they decouple callers from implementations.
 - **Evidence Anchoring:** Feedback must point directly to tokens in the learner's solution (e.g., *"In `ParkingSpot.ts`, the `calculateFee()` method couples spot state with billing rules"*).
 - **Separation of Concern from Suggestion:** A concern articulates the architectural smell; the suggestion gives a clear path for the next attempt.
@@ -191,7 +191,7 @@ We separate concerns strictly:
 
 #### Change Test B: Feedback comes from one evaluator today; later rule-based evaluators or human review are added.
 - **Impact on Practice Flow:** **Zero changes to the practice service or learner flow.**
-- **How it works:** We employ the **Composite Pattern** via `CompositeEvaluator implements IEvaluator`. The practice service depends strictly on `IEvaluator`. To incorporate human review, we add `HumanReviewEvaluatorStub implements IEvaluator` or route the submission to a reviewer queue. The learner's attempt lifecycle remains identical (`SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED`).
+- **How it works:** We employ the **Composite Pattern** via `CompositeEvaluator implements IEvaluator`. The practice service depends strictly on `IEvaluator`. To incorporate human review, we add `HumanReviewEvaluatorStub implements IEvaluator` or route the submission to a reviewer queue. The learner's attempt lifecycle remains identical (`SUBMITTED` → `EVALUATING` → `COMPLETED`).
 
 ### Q5: What should happen if evaluation takes time or fails?
 **Decision:** Asynchronous execution with state preservation:

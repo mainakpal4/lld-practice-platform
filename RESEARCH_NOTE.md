@@ -36,10 +36,10 @@ To inform our MVP, we researched four prominent existing paradigms for software 
 
 | Approach / Platform | Typical Workflow | Strengths | Critical Gaps for LLD Learners |
 | :--- | :--- | :--- | :--- |
-| **DSA Platforms**<br>*(LeetCode, HackerRank, NeetCode)* | Code editor $\rightarrow$ Run unit tests $\rightarrow$ Instant Pass/Fail. | Deterministic, high trust, fast feedback loop, clear objective milestones. | **Zero applicability to design thinking.** DSA tests inputs vs. outputs; it cannot evaluate encapsulation, cohesion, pattern appropriateness, or extensibility. |
-| **Interactive Textbooks**<br>*(Educative Grokking LLD, Arpit Bhayani, Design Gurus)* | Read chapter $\rightarrow$ Review author's UML diagram $\rightarrow$ Inspect reference Java/C++ code. | High educational quality, explains common patterns, provides curated interview questions. | **Passive consumption.** The learner does not construct designs from scratch, does not encounter design edge cases, and receives no feedback on their own variations. |
-| **Generic LLM Chatbots**<br>*(ChatGPT, Claude, Gemini Web UI)* | Paste prompt: *"Review my parking lot design"* $\rightarrow$ Receive conversational response. | Accessible, flexible, capable of reasoning about object relationships and edge cases. | **Unconstrained and inconsistent.** LLMs tend to offer flattering, vague reviews without a rubric; they hallucinate scores, drift into High-Level Design (e.g. suggesting Kafka/Kubernetes for a parking lot), and fail to track attempt history systematically. |
-| **Open Source Repositories**<br>*(GitHub `awesome-low-level-design`, Gaurav Sen, etc.)* | Clone repo $\rightarrow$ Browse class implementations. | Real code examples in Java/Python/C++. | **Static code dumps.** No guidance, no verification, no deliberate practice loop. |
+| **DSA Platforms**<br>*(LeetCode, HackerRank, NeetCode)* | Code editor → Run unit tests → Instant Pass/Fail. | Deterministic, high trust, fast feedback loop, clear objective milestones. | **Zero applicability to design thinking.** DSA tests inputs vs. outputs; it cannot evaluate encapsulation, cohesion, pattern appropriateness, or extensibility. |
+| **Interactive Textbooks**<br>*(Educative Grokking LLD, Arpit Bhayani, Design Gurus)* | Read chapter → Review author's UML diagram → Inspect reference Java/C++ code. | High educational quality, explains common patterns, provides curated interview questions. | **Passive consumption.** The learner does not construct designs from scratch, does not encounter design edge cases, and receives no feedback on their own variations. |
+| **Generic LLM Chatbots**<br>*(ChatGPT, Claude, Gemini Web UI)* | Paste prompt: *"Review my parking lot design"* → Receive conversational response. | Accessible, flexible, capable of reasoning about object relationships and edge cases. | **Unconstrained and inconsistent.** LLMs tend to offer flattering, vague reviews without a rubric; they hallucinate scores, drift into High-Level Design (e.g. suggesting Kafka/Kubernetes for a parking lot), and fail to track attempt history systematically. |
+| **Open Source Repositories**<br>*(GitHub `awesome-low-level-design`, Gaurav Sen, etc.)* | Clone repo → Browse class implementations. | Real code examples in Java/Python/C++. | **Static code dumps.** No guidance, no verification, no deliberate practice loop. |
 
 ---
 
@@ -76,7 +76,7 @@ Our platform's evaluation rubric and structured starter templates are tailored s
 ## 5. Product Direction & MVP Scope
 
 Our MVP focuses strictly on the **Learner Practice Loop**:
-$$\text{Choose Problem} \longrightarrow \text{Think \& Design} \longrightarrow \text{Submit} \longrightarrow \text{Rubric Feedback} \longrightarrow \text{Review} \longrightarrow \text{Iterate (Try Again)}$$
+$$\text{Choose Problem} → \text{Think \& Design} → \text{Submit} → \text{Rubric Feedback} → \text{Review} → \text{Iterate (Try Again)}$$
 
 ### Core Decisions for the MVP:
 1. **Curated Problem Library (4 Archetypal Problems):**
@@ -90,6 +90,6 @@ $$\text{Choose Problem} \longrightarrow \text{Think \& Design} \longrightarrow \
    - **Deterministic Layer:** Validates submission completeness, presence of core entities, interface definitions, and edge case coverage.
    - **Cognitive / Rubric Layer:** Evaluates single responsibility, coupling/cohesion, appropriate design patterns, and extensibility. Every score must cite specific **Evidence**, **Concerns**, and **Actionable Suggestions**.
 4. **Resilient Asynchronous State Engine:**
-   Submissions transition through `SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED` / `FAILED`. Even if external AI is delayed or errors out, learner work is safely persisted and can be re-evaluated idempotently.
+   Submissions transition through `SUBMITTED` → `EVALUATING` → `COMPLETED` / `FAILED`. Even if external AI is delayed or errors out, learner work is safely persisted and can be re-evaluated idempotently.
 5. **Attempt History & Visual Delta:**
    Learners can view past attempts side-by-side, inspect their score progression, and verify how their architectural decisions matured over time.
