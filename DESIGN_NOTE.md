@@ -1,6 +1,6 @@
 # Design Note: LLD Practice Platform Architecture & Domain Model
 
-**Author:** Engineering Candidate  
+**Author:** Mainak Pal   
 **Project:** CipherSchools Engineering Assignment  
 **Scope:** Monolithic MVP with Clean Domain Boundaries  
 **Target:** 2-Day Engineering Prototype  

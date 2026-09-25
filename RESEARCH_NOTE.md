@@ -1,6 +1,6 @@
 # Research Note: Low-Level Design (LLD) Practice & Evaluation Platform
 
-**Author:** Engineering Candidate  
+**Author:** Mainak Pal 
 **Project:** CipherSchools Engineering Assignment  
 **Timeline:** 2-Day Engineering MVP  
 **Topic:** Designing a Meaningful Practice Loop for Low-Level System Design  

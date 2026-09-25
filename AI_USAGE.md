@@ -1,7 +1,7 @@
 # AI Usage Report (AI_USAGE.md)
 
 **Project:** LLD Practice Platform MVP (CipherSchools 2-Day Engineering Assignment)  
-**Author:** Engineering Candidate  
+**Author:** Mainak Pal  
 
 As encouraged by Section 6 of the assignment brief, AI assistance (Gemini / Antigravity) was utilized as an architectural thinking partner and accelerator. Below are 4 meaningful AI-assisted decisions demonstrating critical engineering judgement: what the AI suggested, what was accepted or rejected, and the rationale behind each choice.
 
