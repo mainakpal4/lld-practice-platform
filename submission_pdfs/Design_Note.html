@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Design Note</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+      @bottom-right {
+        content: counter(page);
+        font-size: 9pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 20pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 2px solid #059669;
+      padding-bottom: 6px;
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: 11.5pt;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    strong {
+      color: #0f172a;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #e2e8f0;
+      margin: 18px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 9pt;
+      background-color: #f1f5f9;
+      color: #047857;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      page-break-inside: avoid;
+      margin: 12px 0;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 10px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    blockquote {
+      border-left: 4px solid #059669;
+      margin: 12px 0;
+      padding: 8px 14px;
+      background-color: #ecfdf5;
+      color: #065f46;
+      border-radius: 0 4px 4px 0;
+      font-size: 10pt;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 8pt;
+      font-weight: 600;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .mermaid {
+      margin: 14px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+  
+    .flow-chart {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 14px 0;
+      font-size: 9pt;
+      font-weight: 600;
+    }
+    .flow-step {
+      background: #ffffff;
+      border: 1px solid #94a3b8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #0f172a;
+    }
+    .flow-arrow {
+      color: #059669;
+      font-weight: bold;
+      font-size: 11pt;
+    }
+
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <h1>Design Note: LLD Practice Platform Architecture &amp; Domain Model</h1>
+<p><strong>Author:</strong> Mainak Pal<br><strong>Project:</strong> CipherSchools Engineering Assignment<br><strong>Scope:</strong> Monolithic MVP with Clean Domain Boundaries<br><strong>Target:</strong> 2-Day Engineering Prototype  </p>
+<hr>
+<h2>1. System Overview &amp; The Practice Loop</h2>
+<p>The <strong>LLD Practice Platform</strong> is built to facilitate deliberate practice in Object-Oriented and Low-Level System Design. The system architecture is centered entirely around the learner&#39;s feedback loop:</p>
+<p><div style="text-align:center; font-family:monospace; background:#f8fafc; padding:8px; border:1px solid #e2e8f0; border-radius:4px; margin:8px 0;">[Problem Selection] &rarr; [Structured Design Draft] &rarr; [Asynchronous Submission] &rarr; [Rubric Evaluation] &rarr; [Progression Review &amp; Retry]</div></p>
+<h3>Architectural Philosophy: Deliberate Simplicity</h3>
+<p>Rather than attempting to build a generic LMS or heavy distributed microservices (which violate Section 5 of the assignment brief), this system is implemented as a <strong>modular monolith</strong> with clean separation between the <strong>Domain Model</strong>, <strong>Evaluation Strategies</strong>, <strong>Application Services</strong>, and <strong>Presentation Layer</strong>.</p>
+<h3>Explicit Anti-Goals:</h3>
+<ul>
+<li><strong>No Microservices or Service Meshes:</strong> Zero Kubernetes or network RPC bloat for an internal domain problem.</li>
+<li><strong>No Brittle Sandboxed Compilers:</strong> We evaluate architectural abstractions, boundaries, and trade-offs rather than forcing code into a rigid test harness that breaks if a class is renamed.</li>
+<li><strong>No Unconstrained &quot;Black-Box&quot; AI Prompts:</strong> No asking an LLM &quot;Score this out of 100&quot;. Every evaluation must follow a strict schema anchored to literal code evidence.</li>
+</ul>
+<hr>
+<h2>2. Core Domain Model &amp; Class Responsibilities</h2>
+<p>The domain layer is completely decoupled from web frameworks, UI libraries, or database drivers. Every abstraction exists for a specific domain necessity.</p>
+<pre><code class="language-mermaid">classDiagram
+    class Problem {
+        +string id
+        +string title
+        +string description
+        +Difficulty difficulty
+        +Requirement[] requirements
+        +Rubric rubric
+        +Template starterTemplate
+        +validateSubmission(Submission)
+    }
+
+    class Attempt {
+        +string id
+        +string problemId
+        +string learnerId
+        +number attemptNumber
+        +AttemptStatus status
+        +Submission currentSubmission
+        +EvaluationResult evaluationResult
+        +DateTime createdAt
+        +submit(Submission)
+        +completeEvaluation(EvaluationResult)
+        +failEvaluation(string reason)
+        +canRetry() boolean
+    }
+
+    class Submission {
+        +string id
+        +string attemptId
+        +SubmissionType type
+        +ISubmissionContent content
+        +DateTime submittedAt
+        +getSummary()
+    }
+
+    class ISubmissionContent {
+        &lt;&lt;interface&gt;&gt;
+        +validate() ValidationResult
+        +getAssumptions() string
+        +getClassSkeletonCode() string
+        +getDesignPatterns() string
+        +getTradeOffsAndEdgeCases() string
+        +getClassDiagramMermaid() string
+        +getRawText() string
+    }
+
+    class StructuredTextSubmissionContent {
+        +string assumptions
+        +string classSkeletonCode
+        +string designPatterns
+        +string tradeOffsAndEdgeCases
+        +string classDiagramMermaid
+        +validate()
+    }
+
+    class EvaluationResult {
+        +string id
+        +string submissionId
+        +number overallScore
+        +CriterionFeedback[] criteriaFeedback
+        +string[] keyStrengths
+        +string[] improvementSuggestions
+        +DateTime evaluatedAt
+    }
+
+    class CriterionFeedback {
+        +string criterionId
+        +string criterionName
+        +number score
+        +number maxScore
+        +number weight
+        +string evidence
+        +string concern
+        +string suggestion
+        +ConfidenceLevel confidence
+    }
+
+    class IEvaluator {
+        &lt;&lt;interface&gt;&gt;
+        +evaluate(Problem, Submission) Promise~EvaluationResult~
+    }
+
+    class CompositeEvaluator {
+        -IEvaluator[] evaluators
+        +evaluate(Problem, Submission) Promise~EvaluationResult~
+    }
+
+    class DeterministicRuleEvaluator {
+        +evaluate(Problem, Submission) Promise~EvaluationResult~
+    }
+
+    class LlmEvaluator {
+        -ILlmClient client
+        -IRubricPromptBuilder promptBuilder
+        +evaluate(Problem, Submission) Promise~EvaluationResult~
+    }
+
+    class HumanReviewEvaluatorStub {
+        +evaluate(Problem, Submission) Promise~EvaluationResult~
+    }
+
+    Problem &quot;1&quot; *-- &quot;many&quot; Attempt
+    Attempt &quot;1&quot; *-- &quot;1..*&quot; Submission
+    Submission &quot;1&quot; *-- &quot;1&quot; ISubmissionContent
+    StructuredTextSubmissionContent ..|&gt; ISubmissionContent
+    Attempt &quot;1&quot; o-- &quot;0..1&quot; EvaluationResult
+    EvaluationResult &quot;1&quot; *-- &quot;many&quot; CriterionFeedback
+    CompositeEvaluator ..|&gt; IEvaluator
+    DeterministicRuleEvaluator ..|&gt; IEvaluator
+    LlmEvaluator ..|&gt; IEvaluator
+    HumanReviewEvaluatorStub ..|&gt; IEvaluator
+</code></pre>
+<h3>Domain Class Responsibilities:</h3>
+<ol>
+<li><strong><code>Problem</code></strong>: Holds the domain specification, functional/non-functional constraints, and the grading <code>Rubric</code>. It acts as the immutable reference criteria.</li>
+<li><strong><code>Attempt</code></strong>: Manages the lifecycle of a learner&#39;s engagement with a problem. Governs the state machine:
+<div style="text-align:center; font-family:monospace; background:#f8fafc; padding:8px; border:1px solid #e2e8f0; border-radius:4px; margin:8px 0;">DRAFT &rarr; SUBMITTED &rarr; EVALUATING &rarr; COMPLETED   (or  FAILED)</div>
+Enforces state invariants, guards against duplicate submissions, and guarantees data integrity.</li>
+<li><strong><code>Submission</code></strong>: Represents the immutable snapshot of a candidate&#39;s design at a specific point in time. It encapsulates an <code>ISubmissionContent</code>.</li>
+<li><strong><code>ISubmissionContent</code></strong>: Polymorphic interface defining what constitutes a valid design representation.</li>
+<li><strong><code>EvaluationResult</code> &amp; <code>CriterionFeedback</code></strong>: Highly structured evaluation artifact. Instead of a single opaque number, it provides a breakdown across 6 core LLD dimensions.</li>
+<li><strong><code>IEvaluator</code></strong>: Strategy interface for evaluating a submission against a problem rubric.</li>
+</ol>
+<hr>
+<h2>3. Addressing the 5 Main Design Questions</h2>
+<h3>Q1: What does a learner actually need to provide for an LLD attempt to be meaningful?</h3>
+<p><strong>Decision:</strong> A meaningful LLD attempt does <em>not</em> require thousands of lines of boilerplate compilable code. Compilable code in Java/C++ often obscures design intent with syntactical overhead.<br>A learner must provide <strong>four essential structural components</strong>:</p>
+<ol>
+<li><strong>Clarifying Assumptions &amp; Scope:</strong> What is in-scope vs. out-of-scope (e.g., single parking garage vs. distributed chain; payment processing as an abstract gateway).</li>
+<li><strong>Entity &amp; Interface Hierarchy:</strong> Concrete classes, abstract classes, interfaces, attributes, and method signatures demonstrating polymorphic design.</li>
+<li><strong>Design Patterns &amp; Relationship Rationale:</strong> Explicit justification for chosen patterns (e.g., Why Strategy for Spot Allocation? Why State for Elevator/Vending Machine?).</li>
+<li><strong>Edge Cases, Concurrency &amp; Trade-offs:</strong> How the design handles race conditions (e.g. two cars claiming the same parking spot), capacity limits, and transactional rollbacks.</li>
+</ol>
+<h3>Q2: What makes feedback useful when there can be more than one valid LLD solution?</h3>
+<p><strong>Decision:</strong> Feedback must never treat a reference solution as the sole canonical truth. Instead, feedback is evaluated against <strong>axiomatic object-oriented principles (SOLID)</strong> using a <strong>Rubric-Driven Evaluation Shape</strong>:
+<div style="text-align:center; font-family:monospace; background:#f8fafc; padding:8px; border:1px solid #e2e8f0; border-radius:4px; margin:8px 0;">Criterion &rarr; Score &rarr; Direct Evidence &rarr; Identified Concern &rarr; Actionable Suggestion &rarr; Confidence</div></p>
+<ul>
+<li><strong>Equifinality in Design:</strong> If Design A uses Strategy and Design B uses Command, both receive full marks for abstraction <em>if</em> they decouple callers from implementations.</li>
+<li><strong>Evidence Anchoring:</strong> Feedback must point directly to tokens in the learner&#39;s solution (e.g., <em>&quot;In <code>ParkingSpot.ts</code>, the <code>calculateFee()</code> method couples spot state with billing rules&quot;</em>).</li>
+<li><strong>Separation of Concern from Suggestion:</strong> A concern articulates the architectural smell; the suggestion gives a clear path for the next attempt.</li>
+</ul>
+<h3>Q3: Which parts of evaluation should be deterministic, and which parts benefit from an LLM?</h3>
+<p>We separate concerns strictly:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Evaluation Dimension</th>
+<th align="left">Evaluator Engine</th>
+<th align="left">Rationale</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Completeness &amp; Structure</strong></td>
+<td align="left"><strong>Deterministic</strong></td>
+<td align="left">Verifies presence of required sections, non-empty assumptions, minimum class count, and presence of interfaces.</td>
+</tr>
+<tr>
+<td align="left"><strong>Relationship &amp; Syntax Integrity</strong></td>
+<td align="left"><strong>Deterministic</strong></td>
+<td align="left">Validates Mermaid diagram syntax, verifies that referenced types exist, and checks for cyclical inheritance.</td>
+</tr>
+<tr>
+<td align="left"><strong>Submission State &amp; Idempotency</strong></td>
+<td align="left"><strong>Deterministic</strong></td>
+<td align="left">State machine transitions, duplicate submission rejection, retry eligibility.</td>
+</tr>
+<tr>
+<td align="left"><strong>Single Responsibility &amp; Cohesion</strong></td>
+<td align="left"><strong>LLM (Rubric-Guided)</strong></td>
+<td align="left">Requires semantic reasoning to judge whether an object possesses too many disparate reasons to change.</td>
+</tr>
+<tr>
+<td align="left"><strong>Pattern Appropriateness</strong></td>
+<td align="left"><strong>LLM (Rubric-Guided)</strong></td>
+<td align="left">Evaluates whether a chosen pattern solves a real flexibility problem or is speculative over-engineering.</td>
+</tr>
+<tr>
+<td align="left"><strong>Extensibility &amp; Trade-offs</strong></td>
+<td align="left"><strong>LLM (Rubric-Guided)</strong></td>
+<td align="left">Tests how well the design accommodates future requirement changes (e.g., adding an EV charging spot or new billing tier).</td>
+</tr>
+</tbody></table>
+<h3>Q4: How does the design accommodate another evaluation approach or another submission format? (The Two Change Tests)</h3>
+<h4>Change Test A: Learner submits text today; later the platform supports interactive class diagrams.</h4>
+<ul>
+<li><strong>Impact on Domain Model:</strong> <strong>Zero changes to core domain logic.</strong></li>
+<li><strong>How it works:</strong> The domain defines <code>ISubmissionContent</code>. Today we implement <code>StructuredTextSubmissionContent</code>. When a visual diagram editor (e.g. React Flow or Draw.io) is added, we simply introduce <code>VisualCanvasSubmissionContent implements ISubmissionContent</code>. The <code>Submission</code> entity, <code>Attempt</code> state machine, and <code>IEvaluator</code> interfaces remain untouched.</li>
+</ul>
+<h4>Change Test B: Feedback comes from one evaluator today; later rule-based evaluators or human review are added.</h4>
+<ul>
+<li><strong>Impact on Practice Flow:</strong> <strong>Zero changes to the practice service or learner flow.</strong></li>
+<li><strong>How it works:</strong> We employ the <strong>Composite Pattern</strong> via <code>CompositeEvaluator implements IEvaluator</code>. The practice service depends strictly on <code>IEvaluator</code>. To incorporate human review, we add <code>HumanReviewEvaluatorStub implements IEvaluator</code> or route the submission to a reviewer queue. The learner&#39;s attempt lifecycle remains identical (<code>SUBMITTED</code> &rarr; <code>EVALUATING</code> &rarr; <code>COMPLETED</code>).</li>
+</ul>
+<h3>Q5: What should happen if evaluation takes time or fails?</h3>
+<p><strong>Decision:</strong> Asynchronous execution with state preservation:</p>
+<ol>
+<li><strong>Immediate Persistence:</strong> When the learner clicks Submit, the submission is persisted synchronously with status <code>SUBMITTED</code>. The API responds immediately with <code>202 Accepted</code> and the <code>attemptId</code>. The learner is never blocked by slow external AI inference.</li>
+<li><strong>Background Job Runner:</strong> An in-process <code>EvaluationJobRunner</code> picks up the attempt, transitions status to <code>EVALUATING</code>, and executes the evaluator pipeline.</li>
+<li><strong>Graceful Failure &amp; Resilient Retry:</strong> If an LLM call times out or throws an error:<ul>
+<li>The attempt transitions to <code>FAILED</code> with a descriptive user-friendly message.</li>
+<li>The learner&#39;s submitted design is <strong>never lost</strong>.</li>
+<li>A deterministic baseline score is provided as an immediate fallback, or the learner can trigger a one-click &quot;Retry Evaluation&quot; without retyping their solution.</li>
+</ul>
+</li>
+<li><strong>Idempotency Guard:</strong> If a learner double-clicks or retries while evaluation is in progress, the state machine rejects concurrent evaluations with a <code>409 Conflict / In-Progress</code> guard.</li>
+</ol>
+<hr>
+<h2>4. Evaluation Rubric Dimensions (Fixed Shape)</h2>
+<p>The platform evaluates submissions across 6 weighted dimensions:</p>
+<ol>
+<li><strong>Requirements &amp; Scope Understanding (15%):</strong> Correct identification of primary use cases, edge scenarios, and clear boundary assumptions.</li>
+<li><strong>Class Responsibilities &amp; SRP (25%):</strong> Clean cohesion; classes have a single, well-defined reason to change.</li>
+<li><strong>Coupling, Encapsulation &amp; Interfaces (20%):</strong> Loose coupling through abstractions/interfaces; information hiding.</li>
+<li><strong>Design Pattern Appropriateness (15%):</strong> Justified use of Strategy, State, Factory, Observer, or Decorator where applicable.</li>
+<li><strong>Extensibility &amp; Evolution (15%):</strong> Ability of the design to absorb new requirements with minimal code modification (Open/Closed Principle).</li>
+<li><strong>Concurrency &amp; Edge Cases (10%):</strong> Consideration of thread safety, race conditions, null states, and transactional rollbacks.</li>
+</ol>
+<hr>
+<h2>5. Architectural Scalability &amp; Future Separation</h2>
+<p>For this 2-day MVP, a <strong>single Node.js/TypeScript monolith</strong> is the optimal engineering decision:</p>
+<ul>
+<li>Zero inter-process network overhead.</li>
+<li>Shared domain types between backend and frontend.</li>
+<li>Trivial local setup (<code>npm run dev</code>) with no Kubernetes or Docker orchestration needed.</li>
+</ul>
+<p><strong>If the product scales to thousands of concurrent learners</strong>, the simplest component to separate first is the <strong><code>EvaluationWorker</code></strong>:</p>
+<ul>
+<li>The API server remains lightweight, simply persisting submissions to PostgreSQL and pushing an event to Redis/BullMQ.</li>
+<li>Independent worker nodes consume from the queue and invoke LLMs / sandboxed analyzers without impacting UI responsiveness.</li>
+</ul>
+
+</body>
+</html>

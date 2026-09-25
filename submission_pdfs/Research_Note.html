@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Research Note</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    @page {
+      size: A4;
+      margin: 18mm 16mm 18mm 16mm;
+      @bottom-right {
+        content: counter(page);
+        font-size: 9pt;
+        color: #64748b;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.6;
+      color: #1e293b;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 20pt;
+      font-weight: 800;
+      color: #0f172a;
+      border-bottom: 2px solid #059669;
+      padding-bottom: 6px;
+      margin-top: 0;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-top: 22px;
+      margin-bottom: 10px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: 11.5pt;
+      font-weight: 600;
+      color: #0f172a;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    strong {
+      color: #0f172a;
+    }
+
+    hr {
+      border: 0;
+      border-top: 1px solid #e2e8f0;
+      margin: 18px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 9.5pt;
+      page-break-inside: avoid;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    tr:nth-child(even) td {
+      background-color: #f8fafc;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+      font-size: 9pt;
+      background-color: #f1f5f9;
+      color: #047857;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background-color: #0f172a;
+      color: #f8fafc;
+      padding: 12px 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 8.5pt;
+      line-height: 1.45;
+      page-break-inside: avoid;
+      margin: 12px 0;
+    }
+
+    pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    ul, ol {
+      margin-top: 0;
+      margin-bottom: 10px;
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    blockquote {
+      border-left: 4px solid #059669;
+      margin: 12px 0;
+      padding: 8px 14px;
+      background-color: #ecfdf5;
+      color: #065f46;
+      border-radius: 0 4px 4px 0;
+      font-size: 10pt;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 8pt;
+      font-weight: 600;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .mermaid {
+      margin: 14px 0;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+  
+    .flow-chart {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 14px 0;
+      font-size: 9pt;
+      font-weight: 600;
+    }
+    .flow-step {
+      background: #ffffff;
+      border: 1px solid #94a3b8;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #0f172a;
+    }
+    .flow-arrow {
+      color: #059669;
+      font-weight: bold;
+      font-size: 11pt;
+    }
+
+  </style>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <h1>Research Note: Low-Level Design (LLD) Practice &amp; Evaluation Platform</h1>
+<p><strong>Author:</strong> Mainak Pal<br><strong>Project:</strong> CipherSchools Engineering Assignment<br><strong>Timeline:</strong> 2-Day Engineering MVP<br><strong>Topic:</strong> Designing a Meaningful Practice Loop for Low-Level System Design  </p>
+<hr>
+<h2>1. Executive Summary &amp; The Learner Problem</h2>
+<p>Practicing Low-Level Design (LLD / Object-Oriented Design) is a notorious bottleneck for software engineers transitioning from intermediate coding to senior design maturity. While Data Structures and Algorithms (DSA) benefit from standardized platforms with instant, deterministic unit testing (e.g., LeetCode, Codeforces), LLD practice remains fragmented, subjective, and frustrating.</p>
+<p>When a learner prepares for an LLD problem—such as designing a <strong>Parking Lot</strong>, <strong>Elevator Control System</strong>, <strong>Vending Machine</strong>, or <strong>Rate Limiter</strong>—they face five acute friction points:</p>
+<ol>
+<li><p><strong>How do learners currently practice?</strong><br>Learners typically grab a notebook or Google Doc, sketch a few class names, peek at a tutorial or YouTube video after 15 minutes, and copy the author&#39;s structure. There is virtually no active retention, failure recovery, or rigorous trial-and-error.</p>
+</li>
+<li><p><strong>How does the learner decide whether their solution is good?</strong><br>Without an experienced staff engineer reviewing their code, learners have no reliable feedback mechanism. Unlike algorithms where output is either correct or incorrect, low-level design is an exercise in trade-offs, separation of concerns, and clean abstraction. Learners cannot tell whether their 8 classes are over-engineered or missing key polymorphic extension points.</p>
+</li>
+<li><p><strong>What happens when two valid designs look very different?</strong><br>In LLD, there is rarely a single &quot;canonical&quot; solution. One engineer may model a Parking Lot with a strategy-driven spot allocator (<code>IParkingStrategy</code>) and separate hourly billing policies (<code>IBillingPolicy</code>), while another utilizes an event-driven observer pattern. Current resources often treat a single author&#39;s diagram as the &quot;correct&quot; answer, falsely penalizing legitimate alternative designs.</p>
+</li>
+<li><p><strong>What feedback actually helps a learner improve on the next attempt?</strong><br>Generic praise (&quot;Looks good!&quot;) or unanchored scores (&quot;7/10&quot;) do not teach. Useful feedback must be <strong>anchored to concrete evidence</strong> in the submission: identifying where the Single Responsibility Principle was violated, pointing out high coupling between entities, warning about missing concurrency guards, and proposing a targeted next step for the next iteration.</p>
+</li>
+<li><p><strong>What evidence should the platform retain from an attempt?</strong><br>To foster genuine mastery, the platform must preserve the learner&#39;s assumptions, class definitions, relationships, and design trade-offs across attempts. It must compute the <strong>progression delta</strong> between Attempt $N$ and Attempt $N+1$, demonstrating whether the candidate successfully resolved earlier critique.</p>
+</li>
+</ol>
+<hr>
+<h2>2. Research of Existing Approaches &amp; Market Landscape</h2>
+<p>To inform our MVP, we researched four prominent existing paradigms for software design practice:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Approach / Platform</th>
+<th align="left">Typical Workflow</th>
+<th align="left">Strengths</th>
+<th align="left">Critical Gaps for LLD Learners</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>DSA Platforms</strong><br><em>(LeetCode, HackerRank, NeetCode)</em></td>
+<td align="left">Code editor &rarr; Run unit tests &rarr; Instant Pass/Fail.</td>
+<td align="left">Deterministic, high trust, fast feedback loop, clear objective milestones.</td>
+<td align="left"><strong>Zero applicability to design thinking.</strong> DSA tests inputs vs. outputs; it cannot evaluate encapsulation, cohesion, pattern appropriateness, or extensibility.</td>
+</tr>
+<tr>
+<td align="left"><strong>Interactive Textbooks</strong><br><em>(Educative Grokking LLD, Arpit Bhayani, Design Gurus)</em></td>
+<td align="left">Read chapter &rarr; Review author&#39;s UML diagram &rarr; Inspect reference Java/C++ code.</td>
+<td align="left">High educational quality, explains common patterns, provides curated interview questions.</td>
+<td align="left"><strong>Passive consumption.</strong> The learner does not construct designs from scratch, does not encounter design edge cases, and receives no feedback on their own variations.</td>
+</tr>
+<tr>
+<td align="left"><strong>Generic LLM Chatbots</strong><br><em>(ChatGPT, Claude, Gemini Web UI)</em></td>
+<td align="left">Paste prompt: <em>&quot;Review my parking lot design&quot;</em> &rarr; Receive conversational response.</td>
+<td align="left">Accessible, flexible, capable of reasoning about object relationships and edge cases.</td>
+<td align="left"><strong>Unconstrained and inconsistent.</strong> LLMs tend to offer flattering, vague reviews without a rubric; they hallucinate scores, drift into High-Level Design (e.g. suggesting Kafka/Kubernetes for a parking lot), and fail to track attempt history systematically.</td>
+</tr>
+<tr>
+<td align="left"><strong>Open Source Repositories</strong><br><em>(GitHub <code>awesome-low-level-design</code>, Gaurav Sen, etc.)</em></td>
+<td align="left">Clone repo &rarr; Browse class implementations.</td>
+<td align="left">Real code examples in Java/Python/C++.</td>
+<td align="left"><strong>Static code dumps.</strong> No guidance, no verification, no deliberate practice loop.</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>3. Key Gaps Identified</h2>
+<p>From this landscape research, three foundational gaps emerge:</p>
+<h3>Gap A: The &quot;Binary vs. Unconstrained&quot; Evaluation Dilemma</h3>
+<p>Platforms either attempt to force LLD into brittle unit test harnesses (which forces learners to match exact class names and method signatures) or rely on unconstrained AI prompts that produce inconsistent, hand-waving critiques.<br><em>Insight:</em> Evaluation must be <strong>rubric-driven and hybrid</strong>—combining deterministic structural checks with structured, evidence-anchored AI reasoning.</p>
+<h3>Gap B: Conflation of LLD with High-Level Distributed Systems</h3>
+<p>Novice learners and poorly-prompted LLMs constantly confuse LLD with HLD. An LLD attempt for an Elevator often devolves into discussions of WebSocket gateways, Redis clusters, and load balancers, rather than core object modeling: dispatching strategies, elevator state patterns, internal vs. external button models, and thread safety.<br><em>Insight:</em> The platform must firmly enforce <strong>LLD scope boundaries</strong> through structured submission forms (Requirements &amp; Assumptions, Entity Hierarchy, Design Patterns, Concurrency/Edge Cases).</p>
+<h3>Gap C: Absence of an Iterative &quot;Attempt Progression&quot; Loop</h3>
+<p>Existing tools treat design as a one-shot exam. In reality, software engineering design reviews are inherently iterative: a design is presented, reviewed, revised, and re-submitted.<br><em>Insight:</em> An LLD platform&#39;s killer feature is <strong>Attempt Progression Tracking</strong>—allowing the learner to re-attempt a problem and see an explicit diff: <em>&quot;In Attempt 1, you coupled Spot Allocation with Payment. In Attempt 2, you extracted <code>IParkingStrategy</code>, raising your Abstraction score from 2/5 to 5/5.&quot;</em></p>
+<hr>
+<h2>4. How Industry Evaluators Actually Evaluate LLD</h2>
+<p>In senior engineering interviews (Google, Uber, Amazon, Atlassian), interviewers evaluate low-level design along four specific pillars:</p>
+<ol>
+<li><strong>Change Tolerance (Open/Closed Principle):</strong> If the interviewer asks, <em>&quot;Now support electric vehicle charging spots,&quot;</em> does the candidate need to rewrite their core <code>ParkingLot</code> class, or does their polymorphic abstraction absorb the change seamlessly?</li>
+<li><strong>State vs. Behavior Decoupling:</strong> Are entities modeled with single responsibilities, or is there an all-knowing &quot;God Object&quot;?</li>
+<li><strong>Concurrency &amp; Race Conditions:</strong> When two cars enter at the same second, does the code address synchronization (locks, thread-safe collections)?</li>
+<li><strong>Clarity of Assumptions:</strong> Did the candidate bound the problem scope, or did they assume infinite capacity?</li>
+</ol>
+<p>Our platform&#39;s evaluation rubric and structured starter templates are tailored specifically to train learners on these exact industry competencies.</p>
+<hr>
+<h2>5. Product Direction &amp; MVP Scope</h2>
+<p>Our MVP focuses strictly on the <strong>Learner Practice Loop</strong>:
+<div style="text-align:center; font-family:monospace; background:#f8fafc; padding:8px; border:1px solid #e2e8f0; border-radius:4px; margin:8px 0;">Choose Problem &rarr; Think &amp; Design &rarr; Submit &rarr; Rubric Feedback &rarr; Review &rarr; Iterate (Try Again)</div></p>
+<h3>Core Decisions for the MVP:</h3>
+<ol>
+<li><strong>Curated Problem Library (4 Archetypal Problems):</strong><ul>
+<li><strong>Parking Lot System</strong> (Inheritance, Strategy Pattern for allocation &amp; pricing, concurrency).</li>
+<li><strong>Elevator Control System</strong> (State Pattern, SCAN/LOOK Scheduling Algorithm, Dispatcher).</li>
+<li><strong>Vending Machine</strong> (Classic State Pattern: Idle, HasMoney, Dispensing, SoldOut, transaction rollback).</li>
+<li><strong>Rate Limiter Library</strong> (Token Bucket, Leaky Bucket, Sliding Window, Thread-safe interface design).</li>
+</ul>
+</li>
+<li><strong>Structured Submission Format:</strong>
+A hybrid model capturing <strong>Assumptions</strong>, <strong>Entity &amp; Interface Skeleton</strong>, <strong>Mermaid Class Diagram</strong>, and <strong>Trade-offs / Edge Cases</strong>. This yields high design evidence without requiring heavy language compilers.</li>
+<li><strong>Pluggable Evaluation Pipeline:</strong><ul>
+<li><strong>Deterministic Layer:</strong> Validates submission completeness, presence of core entities, interface definitions, and edge case coverage.</li>
+<li><strong>Cognitive / Rubric Layer:</strong> Evaluates single responsibility, coupling/cohesion, appropriate design patterns, and extensibility. Every score must cite specific <strong>Evidence</strong>, <strong>Concerns</strong>, and <strong>Actionable Suggestions</strong>.</li>
+</ul>
+</li>
+<li><strong>Resilient Asynchronous State Engine:</strong>
+Submissions transition through <code>SUBMITTED</code> &rarr; <code>EVALUATING</code> &rarr; <code>COMPLETED</code> / <code>FAILED</code>. Even if external AI is delayed or errors out, learner work is safely persisted and can be re-evaluated idempotently.</li>
+<li><strong>Attempt History &amp; Visual Delta:</strong>
+Learners can view past attempts side-by-side, inspect their score progression, and verify how their architectural decisions matured over time.</li>
+</ol>
+
+</body>
+</html>
