@@ -55,7 +55,7 @@ npm test
 
 The platform is designed around deliberate practice rather than passive reading:
 
-$$\boxed{\text{Choose Problem}} \longrightarrow \boxed{\text{Think \& Model}} \longrightarrow \boxed{\text{Submit}} \longrightarrow \boxed{\text{Rubric Feedback}} \longrightarrow \boxed{\text{Review}} \longrightarrow \boxed{\text{Try Again (Progression)}}$$
+$$\boxed{\text{Choose Problem}} \longrightarrow \boxed{\text{Think - Model}} \longrightarrow \boxed{\text{Submit}} \longrightarrow \boxed{\text{Rubric Feedback}} \longrightarrow \boxed{\text{Review}} \longrightarrow \boxed{\text{Try Again (Progression)}}$$
 
 1. **Choose Problem:** Select from curated, archetypal LLD challenges:
    - **Parking Lot System** (Vehicle polymorphism, Spot allocation strategy, Dynamic pricing strategy, Concurrency).
