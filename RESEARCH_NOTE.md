@@ -1,6 +1,6 @@
 # Research Note: Low-Level Design (LLD) Practice & Evaluation Platform
 
-**Author:** Mainak Pal 
+**Author:** Mainak Pal  
 **Project:** CipherSchools Engineering Assignment  
 **Timeline:** 2-Day Engineering MVP  
 **Topic:** Designing a Meaningful Practice Loop for Low-Level System Design  
@@ -14,7 +14,7 @@ Practicing Low-Level Design (LLD / Object-Oriented Design) is a notorious bottle
 When a learner prepares for an LLD problem—such as designing a **Parking Lot**, **Elevator Control System**, **Vending Machine**, or **Rate Limiter**—they face five acute friction points:
 
 1. **How do learners currently practice?**  
-   Learners typically grab a notebook or Google Doc, sketch a few class names, peek at a tutorial or YouTube video after 15 minutes, and copy the author's structure. There is virtually no active retention or rigorous trial-and-error.
+   Learners typically grab a notebook or Google Doc, sketch a few class names, peek at a tutorial or YouTube video after 15 minutes, and copy the author's structure. There is virtually no active retention, failure recovery, or rigorous trial-and-error.
 
 2. **How does the learner decide whether their solution is good?**  
    Without an experienced staff engineer reviewing their code, learners have no reliable feedback mechanism. Unlike algorithms where output is either correct or incorrect, low-level design is an exercise in trade-offs, separation of concerns, and clean abstraction. Learners cannot tell whether their 8 classes are over-engineered or missing key polymorphic extension points.
@@ -61,13 +61,25 @@ Existing tools treat design as a one-shot exam. In reality, software engineering
 
 ---
 
-## 4. Product Direction & MVP Scope
+## 4. How Industry Evaluators Actually Evaluate LLD
+
+In senior engineering interviews (Google, Uber, Amazon, Atlassian), interviewers evaluate low-level design along four specific pillars:
+1. **Change Tolerance (Open/Closed Principle):** If the interviewer asks, *"Now support electric vehicle charging spots,"* does the candidate need to rewrite their core `ParkingLot` class, or does their polymorphic abstraction absorb the change seamlessly?
+2. **State vs. Behavior Decoupling:** Are entities modeled with single responsibilities, or is there an all-knowing "God Object"?
+3. **Concurrency & Race Conditions:** When two cars enter at the same second, does the code address synchronization (locks, thread-safe collections)?
+4. **Clarity of Assumptions:** Did the candidate bound the problem scope, or did they assume infinite capacity?
+
+Our platform's evaluation rubric and structured starter templates are tailored specifically to train learners on these exact industry competencies.
+
+---
+
+## 5. Product Direction & MVP Scope
 
 Our MVP focuses strictly on the **Learner Practice Loop**:
 $$\text{Choose Problem} \longrightarrow \text{Think \& Design} \longrightarrow \text{Submit} \longrightarrow \text{Rubric Feedback} \longrightarrow \text{Review} \longrightarrow \text{Iterate (Try Again)}$$
 
 ### Core Decisions for the MVP:
-1. **Curated Problem Library (3–4 Archetypal Problems):**
+1. **Curated Problem Library (4 Archetypal Problems):**
    - **Parking Lot System** (Inheritance, Strategy Pattern for allocation & pricing, concurrency).
    - **Elevator Control System** (State Pattern, SCAN/LOOK Scheduling Algorithm, Dispatcher).
    - **Vending Machine** (Classic State Pattern: Idle, HasMoney, Dispensing, SoldOut, transaction rollback).

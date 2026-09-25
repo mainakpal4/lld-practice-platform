@@ -1,6 +1,6 @@
 # Design Note: LLD Practice Platform Architecture & Domain Model
 
-**Author:** Mainak Pal   
+**Author:** Mainak Pal  
 **Project:** CipherSchools Engineering Assignment  
 **Scope:** Monolithic MVP with Clean Domain Boundaries  
 **Target:** 2-Day Engineering Prototype  
@@ -13,7 +13,13 @@ The **LLD Practice Platform** is built to facilitate deliberate practice in Obje
 
 $$\boxed{\text{Problem Selection}} \longrightarrow \boxed{\text{Structured Design Draft}} \longrightarrow \boxed{\text{Asynchronous Submission}} \longrightarrow \boxed{\text{Rubric Evaluation}} \longrightarrow \boxed{\text{Progression Review \& Retry}}$$
 
-Rather than attempting to build a generic LMS or heavy distributed microservices, this system is implemented as a **modular monolith** with clean separation between the **Domain Model**, **Evaluation Strategies**, **Application Services**, and **Presentation Layer**.
+### Architectural Philosophy: Deliberate Simplicity
+Rather than attempting to build a generic LMS or heavy distributed microservices (which violate Section 5 of the assignment brief), this system is implemented as a **modular monolith** with clean separation between the **Domain Model**, **Evaluation Strategies**, **Application Services**, and **Presentation Layer**.
+
+### Explicit Anti-Goals:
+- **No Microservices or Service Meshes:** Zero Kubernetes or network RPC bloat for an internal domain problem.
+- **No Brittle Sandboxed Compilers:** We evaluate architectural abstractions, boundaries, and trade-offs rather than forcing code into a rigid test harness that breaks if a class is renamed.
+- **No Unconstrained "Black-Box" AI Prompts:** No asking an LLM "Score this out of 100". Every evaluation must follow a strict schema anchored to literal code evidence.
 
 ---
 
@@ -46,6 +52,7 @@ classDiagram
         +submit(Submission)
         +completeEvaluation(EvaluationResult)
         +failEvaluation(string reason)
+        +canRetry() boolean
     }
 
     class Submission {
@@ -61,18 +68,19 @@ classDiagram
         <<interface>>
         +validate() ValidationResult
         +getAssumptions() string
-        +getClassesAndInterfaces() string
+        +getClassSkeletonCode() string
         +getDesignPatterns() string
-        +getTradeOffs() string
-        +getDiagramMermaid() string
+        +getTradeOffsAndEdgeCases() string
+        +getClassDiagramMermaid() string
+        +getRawText() string
     }
 
     class StructuredTextSubmissionContent {
         +string assumptions
-        +string classSkeleton
+        +string classSkeletonCode
         +string designPatterns
-        +string tradeOffs
-        +string mermaidDiagram
+        +string tradeOffsAndEdgeCases
+        +string classDiagramMermaid
         +validate()
     }
 
@@ -80,16 +88,18 @@ classDiagram
         +string id
         +string submissionId
         +number overallScore
-        +CriterionFeedback[] criteria
+        +CriterionFeedback[] criteriaFeedback
         +string[] keyStrengths
         +string[] improvementSuggestions
         +DateTime evaluatedAt
     }
 
     class CriterionFeedback {
+        +string criterionId
         +string criterionName
         +number score
         +number maxScore
+        +number weight
         +string evidence
         +string concern
         +string suggestion
@@ -116,7 +126,7 @@ classDiagram
         +evaluate(Problem, Submission) Promise~EvaluationResult~
     }
 
-    class HumanReviewEvaluator {
+    class HumanReviewEvaluatorStub {
         +evaluate(Problem, Submission) Promise~EvaluationResult~
     }
 
@@ -129,14 +139,14 @@ classDiagram
     CompositeEvaluator ..|> IEvaluator
     DeterministicRuleEvaluator ..|> IEvaluator
     LlmEvaluator ..|> IEvaluator
-    HumanReviewEvaluator ..|> IEvaluator
+    HumanReviewEvaluatorStub ..|> IEvaluator
 ```
 
 ### Domain Class Responsibilities:
 1. **`Problem`**: Holds the domain specification, functional/non-functional constraints, and the grading `Rubric`. It acts as the immutable reference criteria.
 2. **`Attempt`**: Manages the lifecycle of a learner's engagement with a problem. Governs the state machine:
    $$\text{DRAFT} \longrightarrow \text{SUBMITTED} \longrightarrow \text{EVALUATING} \longrightarrow \text{COMPLETED} \quad (\text{or } \text{FAILED})$$
-   Enforces idempotency and guarantees state integrity.
+   Enforces state invariants, guards against duplicate submissions, and guarantees data integrity.
 3. **`Submission`**: Represents the immutable snapshot of a candidate's design at a specific point in time. It encapsulates an `ISubmissionContent`.
 4. **`ISubmissionContent`**: Polymorphic interface defining what constitutes a valid design representation.
 5. **`EvaluationResult` & `CriterionFeedback`**: Highly structured evaluation artifact. Instead of a single opaque number, it provides a breakdown across 6 core LLD dimensions.
@@ -156,9 +166,10 @@ A learner must provide **four essential structural components**:
 
 ### Q2: What makes feedback useful when there can be more than one valid LLD solution?
 **Decision:** Feedback must never treat a reference solution as the sole canonical truth. Instead, feedback is evaluated against **axiomatic object-oriented principles (SOLID)** using a **Rubric-Driven Evaluation Shape**:
-$$\text{Criterion} \longrightarrow \text{Score} \longrightarrow \text{Direct Evidence} \longrightarrow \text{Identified Concern} \longrightarrow \text{Actionable Suggestion}$$
-- If Design A uses Strategy and Design B uses Command, both receive full marks for abstraction *if* they decouple callers from implementations.
-- Feedback points to the learner's actual text/diagram tokens (e.g., *"In your `ParkingSpot` class, the `calculateFee()` method couples spot state with billing rules"*).
+$$\text{Criterion} \longrightarrow \text{Score} \longrightarrow \text{Direct Evidence} \longrightarrow \text{Identified Concern} \longrightarrow \text{Actionable Suggestion} \longrightarrow \text{Confidence}$$
+- **Equifinality in Design:** If Design A uses Strategy and Design B uses Command, both receive full marks for abstraction *if* they decouple callers from implementations.
+- **Evidence Anchoring:** Feedback must point directly to tokens in the learner's solution (e.g., *"In `ParkingSpot.ts`, the `calculateFee()` method couples spot state with billing rules"*).
+- **Separation of Concern from Suggestion:** A concern articulates the architectural smell; the suggestion gives a clear path for the next attempt.
 
 ### Q3: Which parts of evaluation should be deterministic, and which parts benefit from an LLM?
 We separate concerns strictly:
@@ -167,7 +178,7 @@ We separate concerns strictly:
 | :--- | :--- | :--- |
 | **Completeness & Structure** | **Deterministic** | Verifies presence of required sections, non-empty assumptions, minimum class count, and presence of interfaces. |
 | **Relationship & Syntax Integrity** | **Deterministic** | Validates Mermaid diagram syntax, verifies that referenced types exist, and checks for cyclical inheritance. |
-| **Submission State & Idempotency** | **Deterministic** | State machine transitions, token deduplication, retry limits. |
+| **Submission State & Idempotency** | **Deterministic** | State machine transitions, duplicate submission rejection, retry eligibility. |
 | **Single Responsibility & Cohesion** | **LLM (Rubric-Guided)** | Requires semantic reasoning to judge whether an object possesses too many disparate reasons to change. |
 | **Pattern Appropriateness** | **LLM (Rubric-Guided)** | Evaluates whether a chosen pattern solves a real flexibility problem or is speculative over-engineering. |
 | **Extensibility & Trade-offs** | **LLM (Rubric-Guided)** | Tests how well the design accommodates future requirement changes (e.g., adding an EV charging spot or new billing tier). |
@@ -176,11 +187,11 @@ We separate concerns strictly:
 
 #### Change Test A: Learner submits text today; later the platform supports interactive class diagrams.
 - **Impact on Domain Model:** **Zero changes to core domain logic.**
-- **How it works:** The domain defines `ISubmissionContent`. Today we implement `StructuredTextSubmissionContent`. When a visual diagram editor (e.g. Draw.io or React Flow) is added, we simply introduce `VisualDiagramSubmissionContent implements ISubmissionContent`. The `Submission` entity, `Attempt` state machine, and `IEvaluator` interfaces remain untouched.
+- **How it works:** The domain defines `ISubmissionContent`. Today we implement `StructuredTextSubmissionContent`. When a visual diagram editor (e.g. React Flow or Draw.io) is added, we simply introduce `VisualCanvasSubmissionContent implements ISubmissionContent`. The `Submission` entity, `Attempt` state machine, and `IEvaluator` interfaces remain untouched.
 
 #### Change Test B: Feedback comes from one evaluator today; later rule-based evaluators or human review are added.
 - **Impact on Practice Flow:** **Zero changes to the practice service or learner flow.**
-- **How it works:** We employ the **Composite Pattern** via `CompositeEvaluator implements IEvaluator`. The practice service depends strictly on `IEvaluator`. To incorporate human review, we add `HumanReviewEvaluator implements IEvaluator` or route the submission to a reviewer queue. The learner's attempt lifecycle remains identical (`SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED`).
+- **How it works:** We employ the **Composite Pattern** via `CompositeEvaluator implements IEvaluator`. The practice service depends strictly on `IEvaluator`. To incorporate human review, we add `HumanReviewEvaluatorStub implements IEvaluator` or route the submission to a reviewer queue. The learner's attempt lifecycle remains identical (`SUBMITTED` $\rightarrow$ `EVALUATING` $\rightarrow$ `COMPLETED`).
 
 ### Q5: What should happen if evaluation takes time or fails?
 **Decision:** Asynchronous execution with state preservation:
@@ -196,7 +207,7 @@ We separate concerns strictly:
 
 ## 4. Evaluation Rubric Dimensions (Fixed Shape)
 
-The platform evaluates submissions across 6 weighted dimensions (each scored 0–10 or 0–5 normalized):
+The platform evaluates submissions across 6 weighted dimensions:
 1. **Requirements & Scope Understanding (15%):** Correct identification of primary use cases, edge scenarios, and clear boundary assumptions.
 2. **Class Responsibilities & SRP (25%):** Clean cohesion; classes have a single, well-defined reason to change.
 3. **Coupling, Encapsulation & Interfaces (20%):** Loose coupling through abstractions/interfaces; information hiding.
@@ -214,5 +225,5 @@ For this 2-day MVP, a **single Node.js/TypeScript monolith** is the optimal engi
 - Trivial local setup (`npm run dev`) with no Kubernetes or Docker orchestration needed.
 
 **If the product scales to thousands of concurrent learners**, the simplest component to separate first is the **`EvaluationWorker`**:
-- The API server remains lightweight, simply persisting submissions to PostgreSQL and pushing an event to Redis/SQS.
+- The API server remains lightweight, simply persisting submissions to PostgreSQL and pushing an event to Redis/BullMQ.
 - Independent worker nodes consume from the queue and invoke LLMs / sandboxed analyzers without impacting UI responsiveness.

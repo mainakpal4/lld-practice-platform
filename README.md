@@ -1,6 +1,7 @@
 # LLD Practice Platform (MVP)
 
 > **CipherSchools 2-Day Engineering Assignment**  
+> **Author:** Mainak Pal  
 > A focused practice and evaluation platform for Low-Level Object-Oriented System Design (Parking Lot, Elevator, Vending Machine, Rate Limiter).
 
 ---
